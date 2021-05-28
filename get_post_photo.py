@@ -28,6 +28,10 @@ class VKApi:
         url = 'https://api.vk.com/method/wall.getById?posts={post}&extended=0&access_token={token}&v=5.130' \
             .format(post=post, token=self.access_token)
         answer = json.loads(requests.get(url).text)
+        if 'error' in answer:
+            print('ooops, we got error with error code: {code}'.format(code=answer['error']['error_code']))
+            print(answer['error']['error_msg'])
+            sys.exit(0)
         answer = answer['response'][0]
         if 'attachments' in answer:
             attachments = answer['attachments']
@@ -55,7 +59,7 @@ class VKApi:
             file_name = str(i) + '.jpg'
             i += 1
             file_path = path / file_name
-            print('saving' + file_name)
+            print('saving: ' + file_name)
             with open(file_path, "wb") as out:
                 shutil.copyfileobj(response.raw, out)
 
